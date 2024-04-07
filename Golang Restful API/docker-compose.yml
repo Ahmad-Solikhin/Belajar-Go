@@ -1,0 +1,27 @@
+version: "3.8"
+
+services:
+  restful_api_mysql:
+    container_name: restful_api_mysql
+    image: "mysql:latest"
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: "root"
+    volumes:
+      - type: volume
+        source: mysql_volume
+        target: "/var/lib/mysql"
+        read_only: false
+    networks:
+      - project_network
+
+volumes:
+  mysql_volume:
+    external: true
+    name: mysql-volume
+
+networks:
+  project_network:
+    name: project_network
+    driver: bridge
