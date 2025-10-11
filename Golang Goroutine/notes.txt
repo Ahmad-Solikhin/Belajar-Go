@@ -1,0 +1,83 @@
+Untuk membuat Goroutine cukup menambahkan perintah go sebelum memanggil function,
+function akan berjalan secara async jadi tidak akan ditunggu samapai selesai,
+dan jika functionnya memiliki return value, valunya tidak bisa ditangkap
+
+Channel
+Tempat komunikasi synchronous di goroutine, ini solusi jika membutuhkan balikan value dari function goroutine
+Di dalam channel ada pengirim dan penerima, biasanya 2 role ini adalah goroutine yang berbeda
+Saat mengirim data ke channel, goroutine akan ter-block sampai ada yang menerima data tersebut
+Ini konsepnya mirip kayak async await di JS
+Channel hanya bisa menampung satu data, jika ingin mengirim data lain harus menunggu data sebelumnya diambil
+Channel hanya bisa menerima satu tipe data
+Channel bisa diambil lebih dari 1 goroutine
+Channel harus di close jika tidak digunakan
+
+Channel di Go menggunakan tipe data chan. saat membuat channel harus langsung dideklarasikan tipe datanya juga
+Untuk mengirim data bisa menggunakan channel <- data
+Untuk menerima data bisa menggugnakan data <- channel
+
+Channel di parameter sebuah function bisa diatur agar bisa hanya untuk menerima data atau untuk mengirim data saja (In / Out)
+Untuk channel yang hanya menerima data bisa menggunakan <-chan string
+Untuk channel yang hanya mengirim data bisa menggunakan chan<- string
+
+Kadang ada case dimana pengirim lebih cepat dibanding penerimanya, di case ini pengirim akan ikutan lambat karena penerimanya yang lambat
+Untuk itu ada Buffered Channel yang bisa menampung data antrian di channel
+Buffer Capacity, ini adalah kapasitas fix yang bisa ditampung dalam antrian
+Misal diset menjadi 5, maka antrian bisa menampiung 5 data, jika ingin mengirim data ke-6 maka harus menunggu antrian kosong
+Untuk membuat Buffered Channel bisa menggunakan make(chan string, 3)
+Untuk mengetahui panjang buffer bisa menggunakan cap(channel)
+Untuk mengetahui jumlah data dalam buffer bisa menggunakan len(channel)
+
+Range Channel
+Kadang ada case kapan channel akan berhenti menerima data
+Untuk menanganinya bisa menggunakan perulangan range dan saat channelnya di close() maka perulangan akan berhenti
+
+Select Channel
+Ada case dimana membutuhkan beberapa channel dan dijalankan beberapa goroutine dan mendapatkan data dari semua channel
+Dengan menggunakan select channel bisa memilih data tercepat dari beberapa channel
+Jika ada data yang datang bersamaan di beberapa channel maka akan dipilih secara random
+
+Default Select
+Jika melakukan select ke channel yang tidak ada datanya maka akan menunggu datanya
+Namun kadang ingin melakukan hal lain sambil menunggu datanya ada bisa menambahkan default pada selectnya
+
+Race Condition
+Ini masalah yang sering terjadi di proses concurrent dan parallel dalam melakukan manipulasi data
+Maksudnya adalah misal 1 variable dimodifikasi dalam 2 function goroutine, maka ada kemungkinana variable hanya dianggap dimodifikasi oleh 1 function
+
+Mutex (Mutual Exclusion)
+Ini bisa digunakan untuk melakukan locking dan unlocking, ketika dilakukan locking tidak ada yang bisa melakukan locking lagi dan mengubah datanya sampai dilakukan unlocking
+
+RWMutex (Read Write Mutex)
+DI golang proses locking ada saat membaca dan mengubah data, terkadang ada rebutan ketika membaca dan mengubah, dengan RWMutex disediakan 2 lock
+
+WaitGroup
+Jika ingin aplikasi menunggu sampai proses goroutine selesai terlebih dahulu bisa menggunakan WaitGroup dibanding menggunakan sleep
+Untuk menandai proses goroutine harus ditunggu bisa menggunakan method Add(int), setelah proses goroutine selesai bisa menggunakan method Done()
+Dan unutk proses menunggunya bisa menggunakan method Wait()
+
+Once
+Fitur dimana function ini hanya akan dieksekusi sekali walaupun banyak goroutine yang mengakses
+
+Pool
+Ini fungsinya untuk menyimpan data, dan untuk menggunakan datanya bisa mengambil dari pool, setelah selesai bisa dikembalikan kedalam pool
+Dan pool di golang ini sudah aman dari race condition
+
+Map
+Mirip dengan map yang ada di golang, cuma bedanya ini aman dari concurrent
+
+Cond
+ini adalah locking berdasarkan kondisi, cond membutuhkan Locker (Mutex atau RWMutex) untuk implementasi lockingnya
+Function Signal() bisa digunakan untuk memberitahu sebuah goroutine agar tidak perlu menunggu lagi, sedangkan Broadcast() untuk memberitahu seluruh goroutine
+
+Atomic
+Ini digunakan untuk membungkus data primitive secara aman saat digunakan dalam concurrent
+
+Ticker
+Ini representasi kejadian yang berulang, jadi ini kayak cron job
+
+GOMAXPROCS
+Untuk melihat jumlah thread bisa menggunakan GOMAXPROCS, bisa dilakukan untuk mengubah jumlah thread dan mendapatkan jumlahnya
+Defaultnya sesuai dengan jumlah CPU
+
+

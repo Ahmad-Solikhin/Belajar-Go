@@ -2,9 +2,10 @@ package exception
 
 import (
 	"encoding/json"
-	"github.com/go-playground/validator/v10"
 	"golang-restful-api/model/dto"
 	"net/http"
+
+	"github.com/go-playground/validator/v10"
 )
 
 func ErrorHandler(writer http.ResponseWriter, request *http.Request, err interface{}) {
