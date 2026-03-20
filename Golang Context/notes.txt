@@ -1,0 +1,20 @@
+Context
+Sebuah data yang membawa value, sinyal cancel, sinyal timeout dan sinyal deadline
+Context biasanya dibuat per request, ini digunakan untuk mempermudah ketika meneruskan value dan sinyal antar proses
+Biasa digunakna untuk mengirim data request atau sinyal dari suatu proses ke proses lain, sehingga dengan context ketika ingin membatalkan semua proses cukup mengirim sinyal ke context
+Hampir semua bagian golang memanfaatkan context, seperti database, http server, http client dan lain2
+Di google sendiri, ketika menggunakan context, context wajib digunakan dan selalu dikirim ke semua function
+Context ini merupakan interface dalam package context
+
+Parent dan Child Context
+Konsep yang digunakan context adalah parent dan child
+Ketika membuat context bisa membuat child dari context yang sudah ada
+1 parent bisa memiliki banyak child, namun 1 child hanya boleh punya 1 parent
+Konsepnya mirip sama oop
+Parent dan child akan selalu terhubung, ketika terjadi pembatalan di parent maka semua child akan ikut dibatalkan, namun ketika child yang dibatalkan maka parent nya tidak
+
+Context adalah object yang immutable jadi setelah dibuat tidak bisa diubah lagi, ketika menambahkan timeout ada mengatur value maka akan selalu membentuk child context baru bukan merubah context aslinya
+Pada awal pembuatan context, context tidak memiliki value, bisa ditambahkan value dengan pair (key - value)
+Ketika menambahkan value ke context akan otomatis dibuat context baru dan context originalnya tidak berubah sama sekali karena immutable tadi
+Untuk mendapatkan valuenya bisa menggunakan function Value(key), urutan mengambil value adalah dari valuenya sendiri dulu, kalau tidak ada maka akan mencari value ke parentnya
+
