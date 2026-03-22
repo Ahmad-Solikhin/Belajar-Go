@@ -1,0 +1,33 @@
+Database
+Secara default golang sudah memiliki bawaan package database yang merupakan standar interface untuk berkomunikasi dengan golang
+Namun untuk akses ke database nya tetap membutuhkan database driver yang meruapakan library
+Saat menggunakan sql.Open bukan membuka connection, melainkan membuat pooling database, jadi management koneksi database dijalankan secara otomatis
+Dengan adanya pool ini bisa ditentukan minimal dan maksimal koneksi pool yang dibuat oleh golang
+Ada beberapa konfigurasi database pooling
+- SetMaxIdleConns(number) : Berapa jumlah koneksi minimal yang dibuat
+- SetMaxOpenConns(number) : Berapa jumlah maksimal koneksi yang boleh dibuat
+- SetConnMaxIdleTime(duration) : Berapa lama waktu menunggu koneksi yang sudah tidak digunakan akan ditutup
+- SetConnMaxLifetime(duration) : Berapa alama koneksi akan hidup sebelum dibuat ulang
+
+Eksekusi Perintah SQL
+Bisa menggunakan ExecContext(context, sql, params), namun tidak akan mengembalikan result
+QueryContext(context, sql, params), mengembalikan result
+Dengan menggunakan context bisa mengirim sinyal cancel menggunakan context nya
+
+Tipe Data Column
+- string : varchar, char
+- int32 : int
+- int64 : bigint
+- float32 : float
+- float64 : double
+- bool : boolean
+- time.Time : date, datetime, time, timestamp
+Untuk mengambil data kolom yang bisa null, bisa menggunakan tipe data yang ada dari package sql
+Untuk mendapatkan id terakhir yang di insert ketika id nya auto increment, bisa menggunakan LastInsertId()
+
+Database Transaction
+Untuk memulai transaction bisa menggunakan db.Begin() yang akan return tx, nantinya semua query akan menggunakan tx
+Pada selanjtnya bisa dilakukan commit atau rollback menggunakan tx terseebut
+
+Repository Pattern
+
