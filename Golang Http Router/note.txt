@@ -1,0 +1,36 @@
+Router
+Inti library HttpRouter adalah struct Router yang merupakan implementasi dari http.Handler
+Untuk membuat router bisa menggunakan function httprouter.New() yang akan mengembalikan pointer
+
+Http Method
+Kelebihan dari Http Router adalah bisa menambahkan http method yang ingin digunakan
+Cara menambahkan routernya adalah emngggunakan router.GET(), router.POST(), dll
+
+Params
+Ini menyimpan paramneter yang dikirim oleh client
+Tapi params ini bukan query parameter, melainkan path variable
+Untuk memberi tahu lokasi param ada di bagian mana harus ditandai pada URL path nya
+
+Router Pattern
+Setiap nama parameter harus diawali dengan : (titik dua) lalu diikuti oleh nama parameternya
+
+Catch All Parameter
+Ini bisa menangkap semua parameter tidak peduli namanya, dan harus berada di posisi akhir, ditandai dengan * (bintang)
+
+Serve File
+Bisa menggunakan function ServeFiles(Path, FileSystem)
+Bisa menggunakan Catch All Parameter dan embed
+
+Panic Handler
+Jika terjadi panic maka otomatis akan terjadi error dan website akan berhenti
+Untuk mengatasi panic di httprouter bisa menggunakan attribute PanicHandler : func(http.ResponseWriter, *http.Request, interface{})
+
+Not Found Handler
+Untuk menggunakannya bisa mengubah router.NotFound = http.Handler
+
+Method Not Allowed Handler
+Untuk menggunakannya bisa mengubah router.MethodNotAllowed = http.Handler
+
+Middleware
+HttpRouter hanya library untuk router saja, untuk middleware sebenarnya tidak dimiliki oleh library ini
+Namun karena kontraknya mengikuti http.Handler bisa diimplementasikan untuk membuat middleware
