@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>With</title>
+</head>
+<body>
+{{with .Address}}
+    Country : {{.Country}}
+    Street : {{.Street}}
+{{else}}
+    Don't have address
+{{end}}
+</body>
+</html>

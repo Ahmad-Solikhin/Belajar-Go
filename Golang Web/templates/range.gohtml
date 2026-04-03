@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Comparator</title>
+</head>
+<body>
+{{range $index, $element := .Hobbies}}
+    <h1>{{$element}}</h1>
+{{else}}
+    <h1>Empty Hobby</h1>
+{{end}}
+</body>
+</html>
