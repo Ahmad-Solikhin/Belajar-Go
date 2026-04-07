@@ -1,0 +1,40 @@
+Dependency Injection
+Di go untuk melakukan DI akan dibuat sebuah function untuk membuat objectnya, konsepnya miurip dengan constructor
+Ketika programnya tidak terlalu besar cara manual mudah dilakukan, kalau semakin besar sebaiknya menggunkaan library agar lebih mudah
+
+Google Wire
+Ini salah satu library yang populer di DI
+Dibutuhkan untuk mendownload aplikasi cmd untuk melakukan generate kode DI nya
+
+Provider
+Ini adalah sebutan function constructor di Google Wire
+
+Injector
+Ini adalah sebuah function constructor, namun isinya berupa konfigurasi yang harus diberitahukan ke Google Wire
+Injectornya sebenarnya tidak digunakan dalam kode program, namun digunakan oleh Google Wire
+Khusus untuk membuat injector perlu menambahkan komentar penanda go:build wireinject dan +build wireinject
+Setelah membuat injector, selanjutnya menggunakan cli Google Wire dengan command "wire gen namapackage"
+Secara otomatis Google Wire akan mencari kode Injector dari package tersbut dan membuat file wire_gen.go
+
+Error
+Google Wire bisa mendeteksi jika terjadi error di Provider yang dibuat
+Jika terjadi error, secara otomatis akan mengembalikan error ketika melakukan DI
+Untuk menggunakan hal ini cukup buat di Provider return valu ke2 berupa error
+
+Injector Signature
+Denga Google Wire bisa mengirimkan parameter pada injector, secara otomatis jika ada Provider yang membutuhkan data dengan tipe parameter yang sama, secara otomatis data di parameter akan digunakan
+
+Provider Set
+Digunakan untuk grouping Provider
+
+Binding Interface
+Biasanya akan digunakan interface sebagai kontrak dari structnya
+Secara default, Google Wire akan menggunakan tipe data asli untuk melakukan DI, jadi jika ada parameter interface dan tidak ada provider yang mengembalikan interface tersebut maka akan dianggap error
+Pada kasus ini, bisa memberi tahu ke Google Wire, jika ingin melakukan binding interface, yaitu memberi tahu untuk sebuah interface akan menggunakan provider dengan tipe apa
+
+Struct Provider
+Bisa juga membuat provider dalam bentuk struct, namun fitur ini jarang digunakan, lebih sering pakai function
+Jadi struct ini bisa dijadikan DI, cukup menyebutkan field mana yang akan di inject, atau jika ingin melakukan injection ke semua field bisa menggunakan karakter * (bintang)
+
+Struct Field Provider
+Bisa membuat field dari struct juga dan field dari struct nya dijadikan dependency
