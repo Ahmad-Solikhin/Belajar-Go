@@ -1,40 +1,30 @@
 package main
 
 import (
-	"github.com/go-playground/validator/v10"
-	_ "github.com/go-sql-driver/mysql"
-	"github.com/julienschmidt/httprouter"
-	"golang-restful-api/app"
-	"golang-restful-api/controller"
-	"golang-restful-api/exception"
+	"fmt"
 	"golang-restful-api/helper"
 	"golang-restful-api/middleware"
-	"golang-restful-api/repository"
-	"golang-restful-api/service"
 	"net/http"
+
+	"github.com/go-playground/validator/v10"
+	_ "github.com/go-sql-driver/mysql"
 )
 
-func main() {
-	db := app.NewDb()
-	validate := validator.New()
-	categoryRepository := repository.NewCategoryRepository()
-	categoryService := service.NewCategoryService(categoryRepository, db, validate)
-	categoryController := controller.NewCategoryController(categoryService)
-
-	router := httprouter.New()
-
-	router.GET("/api/categories", categoryController.FindAll)
-	router.GET("/api/categories/:id", categoryController.FindById)
-	router.POST("/api/categories", categoryController.Create)
-	router.PUT("/api/categories/:id", categoryController.Update)
-	router.DELETE("/api/categories/:id", categoryController.Delete)
-
-	router.PanicHandler = exception.ErrorHandler
-
-	server := http.Server{
+func NewServer(authMiddleware *middleware.AuthMiddleware) *http.Server {
+	return &http.Server{
 		Addr:    "localhost:4000",
-		Handler: middleware.NewAuthMiddleware(router),
+		Handler: authMiddleware,
 	}
+}
+
+func NewValidator() *validator.Validate {
+	return validator.New()
+}
+
+func main() {
+	server := InitializeServer()
+
+	fmt.Println("Running server on " + server.Addr)
 
 	err := server.ListenAndServe()
 	helper.PanicIfError(err)

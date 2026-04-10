@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   restful_api_mysql:
     container_name: restful_api_mysql

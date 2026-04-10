@@ -3,12 +3,13 @@ package service
 import (
 	"context"
 	"database/sql"
-	"github.com/go-playground/validator/v10"
 	"golang-restful-api/exception"
 	"golang-restful-api/helper"
 	"golang-restful-api/model/domain"
 	"golang-restful-api/model/dto"
 	"golang-restful-api/repository"
+
+	"github.com/go-playground/validator/v10"
 )
 
 type CategoryServiceImpl struct {
@@ -17,7 +18,7 @@ type CategoryServiceImpl struct {
 	Validate           *validator.Validate
 }
 
-func NewCategoryService(categoryRepository repository.CategoryRepository, DB *sql.DB, validate *validator.Validate) CategoryService {
+func NewCategoryService(categoryRepository repository.CategoryRepository, DB *sql.DB, validate *validator.Validate) *CategoryServiceImpl {
 	return &CategoryServiceImpl{
 		CategoryRepository: categoryRepository,
 		DB:                 DB,
