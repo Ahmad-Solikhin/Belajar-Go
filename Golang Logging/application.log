@@ -1,0 +1,3 @@
+time="2026-04-11T12:13:14+07:00" level=info msg=Hayolo
+time="2026-04-11T12:13:14+07:00" level=warning msg="Hayolo Warn"
+time="2026-04-11T12:13:14+07:00" level=error msg="Hayolo Error"
