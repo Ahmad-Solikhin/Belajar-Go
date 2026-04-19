@@ -1,0 +1,39 @@
+Menginstall Golang Migrate
+Untuk melakukan install bisa menggunakan
+go install -tags 'database1,database2' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
+Nantinya akan terinsall Golang Migrate yang bisa diakses melalui terminal
+
+Membuat File Migration
+Bisa menggunakan
+migrate create -ext sql -dir db/migrations nama_file_migration
+
+-ext : merupakan file extension
+-dir : folder tempat disimpan file migration nya
+Usahakan tidak menggunakan  spasi pada nama file migrationnya dan huruf kecil semua sesuai best practice nya
+
+Setelah command dijalankan akan dibuat file up dan down, ini mirip kaya di laravel
+
+Migration Up : disi dengan perubahan yang ingin dilakukan
+Migration Down : disi dengan rollback perubahan yang dilakukan pada up
+
+Sebelum menjalankan migration harus dibuat terlebih dahulu databasenya
+
+Menjalankan Migration
+Bisa menggunakan command
+migrate -database "koneksidatabase" -path folder up
+contoh
+migrate -database "postgres://postgres:root@localhost:5432/belajar_golang?sslmode=disable" -path ./db/migration up
+
+Untuk melakukan rollback migration bisa menggunakan command
+migrate -database "koneksidatabase" -path folder down
+contoh
+migrate -database "postgres://postgres:root@localhost:5432/belajar_golang?sslmode=disable" -path ./db/migration down
+
+Migrasi ke Versi yang Diinginkan
+Jika ingin melakukan versi ini bisa menambahkan angka yang merupakan jumlah migration yang ingin dieksekusi
+
+Dirty State
+Jika ada kesalahan script sql dan terlanjur menjalankan migratin maka akan ditandai dengan dirty state
+Ketika terjadi kesalahan seperti itu harus diperbaiki secara manual karena migration tidak bisa menghandle kesalahan ini
+Setelah diperbaiki secara manual bisa mengubah versi menggunkana command
+migrate -database "koneksidatabase" -path folder force versi
