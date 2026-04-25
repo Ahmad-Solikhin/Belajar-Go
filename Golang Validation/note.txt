@@ -1,0 +1,53 @@
+Library Validation
+Banyak library yang bisa digunakan untuk melakukan validation, tpai yang paling populer saat ini adalah Validator Package
+
+Validate Struct
+Validator didesain agar thread safe dan digunakan sebagai object singleton
+Validator akan melakukan cache informasi seperti rules, tags, dan lain2 yang berhubungan dengan validation
+Jika selalu dibuat object baru maka tidak akan mendapatkan keuntungan cache
+Package Validator merepresentasikan object untuk validationnya dalam struct Validate di package validator
+
+Validator Tag
+Untuk melakukan validasi di golang menggunakan tag
+Contoh misal variable yang harus ada isinya, bukan default value, bisa gunakan tag "required"
+
+Validasi Dua Variable
+Untuk membandingkan dua variable bisa emnggunakan tag eqfield
+Method yang bisa digunakan adalah VarWithValue
+
+Baked-in Validations
+Ini adalah tag-tag yang sudah ada dibawaan library validation yang bisa langsung digunakan
+Ada banyak validation yang sudah disediakan, bisa dicek pada dokumentasinya
+
+Multiple Tag Validation
+Bisa lebih dari 1 tag dengan menambahkan , (koma) dan diikuti dengan tag selanjtunya
+Ketika menyebutkan lebih dari 1 tag maka semua tag harus valid
+
+Tag Parameter
+Validator juga mendukung penggunaan parameter ketika menggunakan tag
+Ini berguna ketiuka butuh paramater pada tag seperti min, max, length, dan lain lain
+Untuk menggunakan parameter bisa langsung menggunakan tanda = (sama dengan) setelah tag, dan diikuti dengan nilai parameter nya
+
+Validasi Struct
+Validasi ini juga bisa diimpelemtasikan pada semua field pada struct nya
+Tag untuk melakukan validasi bisa tinggal menambahkan reflection tag di struct field nya dengan tag validate
+
+Validation Errors
+Validator package memiliki detail struct untuk implementasi error ini, yaitu ValidationErrors
+Jadi nanti ketika terjadi error bisa dilakukan konversi ke ValidationErrors
+Banyak sekali informasi yang dapat diambil dari error tersebut, error tersebut sebenarnya adalah alias dari []FieldError
+
+Validasi Cross Field
+Ada juga validasi antar field di dalam struct dengan cara menggunakan validation dengan tag yang sama dan menyebut field kedua nya
+Contoh : Field Password, tambahkan validate:eqfield=ConfirmPassword
+
+Validasi Nested Struct
+Jika struct memiliki field yang berupa struct lagi maka secara default akan dilakukan validasi juga
+
+Validasi Collection
+Kalo di dalam struct ada field collection maka tidak akan otomatis dilakukan validasi
+Jika ingin melakukan validasi bisa menggunkan tag dive
+
+Validasi Basic Collection
+Misal data collectionnya adalah string, int, bool, dsb
+Untuk melakukan validasi ini bisa dengan cara menambahkan tag validasi lainnya setelah menambahkan tag dive
