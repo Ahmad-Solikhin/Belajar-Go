@@ -51,3 +51,36 @@ Jika ingin melakukan validasi bisa menggunkan tag dive
 Validasi Basic Collection
 Misal data collectionnya adalah string, int, bool, dsb
 Untuk melakukan validasi ini bisa dengan cara menambahkan tag validasi lainnya setelah menambahkan tag dive
+
+Validasi Map
+Untuk melakukan validasi menggunakan dive untuk key nya dan dive untuk valuenya
+Untuk key nya bisa menggunakan keys dan diakhiri dengan endkeys
+
+Validasi Basic Map
+Jika map nya adalah tipe data biasa yang bukan struct atau lainnya bisa seperti basic collection
+Untuk key tetap bisa menggunakan keys dan endkeys
+Contohnya dive,keys,required,endkeys,required,gt=0 : Untuk validasi value dimulai setelah tag endkeys
+
+Alias Tag
+Kadang ada kasus dimana menambahkan tag yang sama pada field yang berbeda, dibandingkan menulis dari ulang satu persatu bisa menggunakan fitur alias untuk mempersingkat
+
+Custom Validation
+Jika validation yang dimau tidak tersedia maka bisa membuat custom validation sendiri
+Untuk membuatnya bisa membuat function dengan parameter validator.FieldLevel, lalu registrasikan ke Validate dengan validate.RegisterValidation(tag, function)
+
+Custom Validation Parameter
+Misal di validation memiliki parameter seperti min=10, berarti ada parameter nya 10
+Hal ini bisa digunakan dengan cara mengambiol param nya dengan field.Param()
+
+Or Rule
+Misal kita mau ada kondisi or, ini bisa dilakukan
+Misal field itu boleh email atau numerik
+Untuk melakukannya bisa menggunakan | (pipe)
+
+Custom Validation Cross Field
+Jadi ini bisa digunakan untuk mendapatkan value ke2 secara langsung dari Struct
+Bisa menggunakna method GetStructFieldOK2()
+
+Struct Level Validation
+Sebelumnya validasi hanya pada level field nya
+Tapi ada fitur dimana validasi ada pada struct nya
