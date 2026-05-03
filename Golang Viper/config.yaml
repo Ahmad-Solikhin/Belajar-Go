@@ -1,0 +1,7 @@
+app:
+  name: "belajar_golang_viper"
+  author: "Gayuh"
+  version: "1.0.0"
+
+database:
+  host: "localhost"

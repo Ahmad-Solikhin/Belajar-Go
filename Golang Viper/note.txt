@@ -1,0 +1,10 @@
+Digunakan untuk menyimpan konfigurasi cerdential seperti username dan password database dan hal lainnya
+Jadi ini mirip dengan .env
+Viper mendukung banyak jenis format seperti JSON, YAML, env, properties, dll
+
+Mmebuat Viper
+Untuk membuatnya bisa menggunakan function viper.New()
+
+Environment Variable
+Secara default viper tidak bisa membaca env pada system
+Namun jika ingin bsia membaca env bisa menambahkan function viper.AutomaticEnv()
