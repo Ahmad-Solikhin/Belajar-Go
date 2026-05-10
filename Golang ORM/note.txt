@@ -1,0 +1,200 @@
+GORM
+Library untuk implementasi ORM di golang
+Dengan ini bisa fokus pada pemetaan struct Entity dibanding memikirkan detail implementasi SQL nya
+ORM juga mendukung relasi antar Entity seperti One to One, One to Many, dan sebagainya
+
+Raw SQL
+Membuat query SQL secara manual, untuk melakukannya bisa menggunakan
+- method Raw(sql) untuk select
+- method Exec(sql) untuk dml
+
+Model
+Ini adalah struct representasi dari table yang ada di database
+Penamaan struct secara otomatis akan merefer ke table dengan snake_case jamak, contoh struct User akan merefer table users, jika ingin mengubah manual bisa menggunakan interface Tabler dengan membuat method TableName yang mereturn nama table
+Salin itu GORM akan secara otomatis membuat field Id menjadi primary key, namun sebaiknya dideklarasikan manual menggunakan tag
+
+Model Conventions
+Beberapa convention yang disediakan oleh GORM antara lain
+- filed ID sebagai primary key
+- table name akan menggunakan snake_case jamak
+- column name akan menggunakan snake_case, misal field ID akan menjadi id dan FirstName akan menjadi first_name
+- timestamp tracking akan melakukan perbahan otomatis untuk waktu dibuat dan diubahnya model menggunakan field CreatedAt dan UpdatedAt, atau kalo nama filednya berbeda bisa menambahkan tag autoCreateTime=true atau autoUpdateTime=true, default valuenya adalah true
+
+Field Permission
+Defaultnya semua field di Model dianggap kolom di table
+Namun kadang mau ada field yang tidak ada sangkut pautnya dengan kolom table atau kolom tidak perlu dilakukan update lagi
+Untuk mengaturnya bisa menggunakan field permission berikut
+- <- = write permission, <-:create untuk create only, <-:update untuk update only, <- untuk create dan update
+- -> = read permission, ->:false untuk tidak boleh di read
+- - = ignore file, tidak ada sangkut pautnya di kolom table
+
+Embedded Struct
+Kadang jika field nya sangat banyak maka akan disimpan dalam struct yang berbeda
+Misal kolom first_name, middle_name, dan last_name dipakai terus menerus maka akan dibuatkan embedded struct Name dan memberi tahu gorm nya dengan tag embedded
+
+Create
+Dengan GORM bisa membaca dari Model yang sudah kita buat dan akan membuat perintah SQL dari Model yang sudah dibuat
+Tinggal menggunakan function Create dati object database
+
+Batch Insert
+Kalo mau memasukkan banyak data sekaligus bisa menggunakan method Create(slice), atau juka ingin menentukan data per SQL insert bisa menggunakan CreateInBatches(slices, size)
+
+Logger
+Secara default informasi perintah SQL yang dieksekusi tidak akan ada di log
+Jika mau bisa mengubah level log dari GORM menggunakan gorm.COnfig{} ketika membuat koneksi database
+
+Transaction
+Transaction hanya bisa terjadi ketika menggunakan connection yang sama, namun ketika menggunakan GORM bisa menggunakan database yang berbeda
+Jika ingin melakukanb transaction bisa menggunakan Transaction(callback)
+Bisa juga kalau ingin melakukan manual transaction, bisa menggunakan object gorm.DB baru dari method Begin(), dan ketika ingin melakukan commit harus Commit(), begitu juga rollback Rollback()
+
+Query
+Sama dengan create, GORM juga bisa secara otomatis membuat SQL select dari model yang dibuat tanpa melakukan select secara manual
+Untuk mengambil single object tersedia method berikut :
+- First() : mengambil data pertama diurutkan berdasarkan id
+- Take() : mengambil data satu data tanpa diurutkan
+- Last() : mengambil data terakhir yang diurutkan berdasarkan id
+Jika data tidak ditemukan maka akan error gorm.ErrRecordNotFound
+
+Inline Condition
+Ketika menggunakan method2 single object sebelumnya terdapat parameter selanjutnya bernama Inline Condition yang akan dijadikan kondisi WHERE di SQL SELECT nya
+
+Query All Objects
+Jika ingin mengambil lebih dari 1 object bisa menggunakan method Find
+Method Find juga mendukung inlin condition
+
+Advance Query
+And Condition
+Selain menggunakan inline parameter, bisa juga menggunakan method Where() untuk mengubah kondisi query yang akan dibuat
+Or Condition
+Ketika menggunakan where maka defaultnya adalah AND, jika ingin menggunakan or bisa menggunakan Or()
+
+Not Condition
+Jika ingin menggunakan not bisa menggunakan method Not
+
+Selected Field
+Secara default semua field akan di select dan dimasukkan ke filed Model
+Namun jika tidak ingin semua field di select bisa menggunakan method Select
+
+Struct & Map Condition
+Ketika menggunakan Where(), Not(), dan Or() bisa menggunakan parameter struct atau map agar bisa dinamis
+Namun jika menggunakan default value dari struct maka tidak akan bisa digunakan karena data tidak dianggap ada
+Kalo memang mau mencari menggunakan default value bisa pakai map condition
+
+Order, Limit, dan Offset
+Untuk melakukan sorting bisa menggunakan method Order()
+Untuk pagination bisa menggunakan kombinasi Limit() dan Offset()
+
+Query Non Model
+Jika ingin menyimpan data ke data yang bukan Model, contoh ingin mencari first_name dan last_name saja di table tanpa membuat struct User
+Caranya tinggal membuat struct lain, tetapi GORM juga harus tau model mana yang akan digunakan, bisa menggunakan method Model() untuk menentukan model yang digunakan
+Struct baru yang digunakan harus menyesuaikan naming convention seperti yang ada di model
+
+Update
+Untuk melakukan update bisa menggunakan method Save()
+Semua filed yang ada permision untuk di update maka akan dilakukan update
+Defaultnya semua kolom akan dilakukan update walaupun ada beberapa kolom yang tidak diubah
+Jika ingin menentukan hanya beberapa kolom yang diupdate bisa menggunakan Updates() jika kolom nya banyak
+Jika hanya 1 kolom bisa menggunakan Update(kolom, value)
+
+Auto Increment
+GORM mendukung pembuatan ID yang Auto Increment, sehingga tidak perlu melakukan query manual untuk mendapatkan ID terakhir
+Tinggal menambahkan tag autoincrement
+
+Timestamp Tracking
+Jika ingin menggunakan field yang berbeda untuk timestamp tracking bisa mengugnakan autoCreateTime atau autoUpdateTime
+Tipe tada yang digunakan adalah Time, tapi bisa diubah tipe datanya jika dimau
+GORM mendukung tipe data dalam bentuk number, dimana satuannya bisa diganti menjadi mili untuk milisecond, atau nano untuk nanosecond, semua disimpan dalam waktu epoch unix time
+Misal auytoCreateTime:milli atau autoUpdateTime:milli
+
+Upsert
+Method Save() juga bisa untuk melakukan insert, hal ini ditentukan dari apakah objectnya sudah memiliki value ID atau belum
+Jika sudah ada maka akan dilakukan update, jika belum maka akan dilakukan insert
+Tapi ini hanya cocok ketika ID nya adalah auto increment
+Data Non Auto Increment
+Walaupun ID nya tidak auto increment tetap bisa dilakukan auto save dari tada yang sudah ada ID nya
+Alurnya akan dilakukan update terlebih dahulu dan mengecek affected row nya, jika 0 maka akan dilakukan insert selanjutnya
+
+On Conflict
+Dengan ini bisa menentukan ketika coba Create() data lalu terjadi conflict (data sudah ada) apa yang ingin dilakukan
+Untuk mengubahnya bisa menggunakan method Clauses()
+
+Delete
+Untuk menghapus data bisa menggunakan method Delete(), method ini bisa di inline dengan method Where()
+
+Soft Delete
+GORM mendukung fitur soft delete secara otomatis dengan membuat field DeletedAt dengan tipe data time gorm.DeletedAt
+Dengan begitu ketika melakukan select, GORM akan otomatis menambahkan kondisi yang belum di delete
+Kalo mau mengambil data yang sudah di soft delete bnisa menggunakan method Unscoped()
+Method Unscoped() juga bisa digunakan ketika benar-benar mau melakukan hard delete
+
+Model Struct
+GORM menyediakan sebuah struct bernama Model yang berisi filed ID, CreatedAt, UpdatedAt, dan DeletedAt
+
+Lock
+Untuk melakukan lock di GORM bisa menambahkan Clauses() Locking
+Nanti bisa digunakan jenis lock nya, UPDATE, SHARE, dna sebagainya yang didukung databasenya
+
+One to One
+Di GORM ini disebut Has One
+Untuk membuat relasi ini di model tinggal membuat filed dengan tipe Model yang berelasi
+Lalu tambahkan gorm tag foreignKey:nama_kolom untuk kolom yang dijadikan foreign key dan references:nama_kolom untuk kolom yang menjadi referensi di model relasinya
+Secara default query relasi bersifat LAZY, jadi kalo mau Eager bisa menyebutkan relasi yang ingin di load menggunakan method Preload()
+Preload() ini tidak melakukan join tapi melakukan query ulang ke tablenya
+Jika ingin menjadi join bisa menggunakan method Joins(), lalu menyebutkan field mana yang akan di join
+
+Auto Upsert Relation
+Secara default jika model memiliki relasi maka akan dilakukan auto upsert ke data relasinya
+Jika tidak mau melakukan auto upsert di data relasinya bisa menggunakan method Omit() yang berisi clauseAssociations
+
+One to Many
+Di GORM disebut Has Many
+Untuk membuatnya tinggal membuat field slice Model yang berelasi
+Bisa juga ditentuykan foreignKey dan reference nya
+Untuk Hash Join yang bisa dilakukan menggunakan Preload()
+
+Belongs To di One to Many
+Ketika membuat relasi Hash Many, ada sudut pandang sebaliknya yaitu Many to One
+Untuk membuat relasi ini bisa menggunakan Belongs To di GORM
+Cara membuatnya seperti relasi One to One
+Untuk relasi One to One bisa juga menggunakan Belongs To, tapi salah satunya harus menggunakan pointer, bisa keduanya juga
+
+Many to Many
+Tag untuk many2many untuk memberitahu table pengubung menggunakan many2many:nama_table
+- foreignKey:kolom_id : untuk model pertama
+- joinForeignKey:kolom_id : untuk foreign key model pertama di table penghubung
+- references:kolom_id : untuk model kedua
+- joinReferences:kolom_id : untuk foreign key model kedua di table penghubung
+Karena table penghubung tidak dibuat modelnya, GORM bisa digunakan untuk manipulasi data tanpa menggunakan Model
+Bisa menggunakan method Table() pada form.DB untuk menyebut table mana yang mau dipilih
+Cara ini bisa digunakan, tapi yang lebih baik menggunakan fitur bernama Association Mode
+
+Association Mode
+Ini adalah fitur untuk melakukan manipulasi data pada relasi menggunakan gorm.Association
+
+Preloading
+Method Preload bisa diberikan kondisi tambahan
+Bisa juga digunakan pada relasi yang nested
+Misal ingin melakukan preload ke semua relasi, bisa menggunakan preload All
+Tapi preload ALL tidak akan melakukan nested relation (negatif nya ini akan select ke banyak table relasinya)
+
+Joins
+Selain menggunakan nama relasi, bisa juga menggunakan query manuyal ketika joins namun kolom relasinya tidak akan di query
+Namun ketika melakukan joins menggunakan query manual maka table relasinya tidak akan ikut di select datanya
+
+Query Aggregation
+Di GORM hanya menyediakan Count() saja
+Kalo mau aggregation yang lain bisa menggunakan query select biasa
+GORM menyediakan method Group() dan juga Having()
+
+Connection Pool
+GORM bisa menggunakan connection pool karena didalamnya tetap menggunakan sql.DB
+Jadi kalo mau ubah konfigurasinya tinggal ubah konfigurasi sql.DB
+
+Migrator
+GORM sebenarnya memiliki fitur untuk melakukan migrator secara otomatis
+Tapi ini jarang sekali digunakan, karena lebih prefer menggunakan database migration yang memiliki versioning
+
+Hook
+Function dalam Model yang akan dipanggil sebelum melakukan operasi query apapun
+Jika functionnya mengembalikan error maka GORM akan menghentikan operasinya

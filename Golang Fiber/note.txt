@@ -1,0 +1,79 @@
+Web Framework
+Golang fiber ini adalah framework yang cukup populer pada golang utuk membuat RESTful API
+Fiber ini terinspirasi dari ExpressJS, jadi penggunaan nya sederhana dan mudah
+
+Fiber App
+fiber.App adalah yang pertama kali perlu dibuat, bisa dibuat menggunakn function fiber.New(fiber.Config)
+Setelah dibuat app nya bisa dilakukan untuk menjalankan web menggunakan method Listen(address)
+
+Configuration
+Ada banyak konfigurasi yang bisa diubah, sebagai contoh adalah timeout
+
+Routing
+Parameter routing membutuhkan 2, yaitu path dan juga fiber.Handler nya
+
+Fiber CTX
+Merupakan representasi dari Request dan Response di fiber
+Jadi dengan Ctx bisa mendapatkan informasi request dan mengembalikan response dari Ctx
+
+HTTP Request
+Untuk mengambil request bisa mengambil dari Ctx dengan banyak method, bisa liat detailnya di dokumentasinya
+
+Route Parameter
+Jadi bisa menambahkan parameter di path URL dengan memberikan nama di route nya, lalu bisa diambil menggunakan method AllParams() atau menggunakan Params(nama)
+
+Request Form
+Kalo mau mendapatkan data from di body bisa menggunakan method FormValue(nama)
+
+Multipart Form
+Ini digunakan jika form nya ada data berupa file, bisa menggunakan method FormFile namun bisa menghasilkan error
+Selain itu Ctx juga memiliki method SaveFile untuk menyimpan file
+
+Request Body
+Biasanya body pada RESTful API akan menggunakan format JSON, XML, dll
+
+Body Parser
+Melakukan konversi body dari byte ke struct sangan sulit kalo manual
+Fiber melakukan parsing otomatis sesuai tipe data yang dikirim dan menjadi otomatis ke dalam struct
+Caranya adalah dengan menambahkan tag pada Struct nya
+- form : application/x-www-form-urlencoded, multipart/form-data
+- json : application/json
+- xml : application/xml, text/xml
+
+HTTP Response
+Ctx di fiber juga bisa digunakan untuk response, berikut method2 yang bisa digunakan
+- Set(key, value) : mengubah header
+- Status(status) : mengubah response status
+- SendString(body) : mengubah response body menjadi string
+- XML(body) : mengubah body menjadi XML
+- JSON(body) : mengubah body jadi JSON
+- Redirect(path) : mengubah response menjadi redirect ke path
+- Cookie(cookie) : menambahkan cookie ke response
+
+Download File
+- Download(file, filename) : mengubah response menjadi isi file
+- Send([]byte) : mengubah response menjadi byte
+- SendFile(file, compress) : mengubah response menjadi isi file
+
+Routing Group
+kalo ingin membuat routing dengan teknik grouping agar menjadi lebih rapih dan simple bisa menggunakan Group() di fiber.App
+
+Pre Fork
+Jadi fitur ini bisa menjalankan beberapa instance fiber yang berbeda dan akan berjalan dalam 1 port yang sama
+Jadi ini akan memanfaatkan fungsi dari sistem operasi SO_REUSEPORT
+
+Error Handling
+Jadi kalo pake fiber nanti error secara otomatis akan ditangkap oleh ErrorHandler pada fiber.Config dan dapat dilakukan costumize
+
+Template
+Fiber tidak memiliki template bawaan, tapi bisa integrasi dengan template engine yang sudah populer, bisa dilihat pada dokumentasi fibernya
+Contoh disini akan menggunakan mustache
+
+Middleware
+Ini adalah proses di tengah yang akan mengandle sebelum request dilanjutkan ke request aslinya
+Untuk menggunakan middleware ini bisa menggunakan Use() pada fiber.App nya
+Kalo menggunakan Use biasa maka akan diterapkan ke semua endpoint, namun jika ingin ke endpoint tertentu saja bisa menggunkan prefix pada parameter pertama Use
+
+HTTP Client
+Fiber menyediakan fitur HTTP Client, untuk menggunakannya bisa pakai fiber.Client
+Jadi untuk mendapatkan client fiber menggunakan konsep pool, untuk mendapatkannya tinggal AcquireClient dan ketika sudah selesai bisa menggunakan ReleaseClient
